@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+
+<mapper namespace="com.goupang.www.dao.product.FileUploadDao">
+
+    <select id = "selectImg" resultType="com.goupang.www.dto.product.ProductImage">
+        select 
+        p.PRODUCT_NO,i.PRODUCT_IMG_NO, PRODUCT_IMG_PATH, PRODUCT_THUMB_PATH 
+        from 
+        product_img i, product p 
+        where 
+        p.PRODUCT_NO = i.PRODUCT_NO
+        and
+        p.PRODUCT_NO = #{productNo}
+    </select>
+    
+    <select id = "selectImgByCate" resultType="com.goupang.www.dto.product.ProductImage">
+        select 
+        p.PRODUCT_NO,i.PRODUCT_IMG_NO, PRODUCT_IMG_PATH, PRODUCT_THUMB_PATH 
+        from 
+        product_img i, product p, product_category c
+        where 
+        p.PRODUCT_NO = i.PRODUCT_NO
+        and
+        p.product_no = c.product_no
+        and
+        c.category_no = #{categoryNo}
+    </select>
+    
+
+	<insert id="insertImg">
+		insert into
+		product_img(
+		PRODUCT_IMG_NO,
+		PRODUCT_NO,
+		PRODUCT_IMG_PATH,
+		PRODUCT_THUMB_PATH)
+		values
+		(PRODUCT_IMG_SEQ.nextval,
+		#{productNo},
+		#{productImgPath},
+		#{productThumbPath}
+		)
+	</insert>
+	<update id="updateImg">
+		update product_img set
+		PRODUCT_IMG_PATH = #{productImgPath},
+		PRODUCT_THUMB_PATH = #{productThumbPath}
+		where PRODUCT_NO = #{productNo}
+	</update>
+
+</mapper>

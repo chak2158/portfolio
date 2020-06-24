@@ -1,0 +1,101 @@
+<form:form
+		action="${pageContext.request.contextPath}/cart/testcartList"
+		modelAttribute="cartList">
+		<table border="1px solid black">
+			<tr>
+				<th>cart_no</th>
+				<th>member_no</th>
+				<th>product_no</th>
+				<th>order_qty</th>
+			</tr>
+			<c:forEach var="cart" items="${cartList}">
+				<!-- for(Cart cart : cartList ) -->
+				<tr>
+
+					<td>${cart.cartNo}</td>
+					<td>${cart.memberNo}</td>
+					<td>${cart.productNo}</td>
+					<%-- <td>${cart.cartNo}</td> --%>
+					<td><form:input path="orderQty" value="${cart.orderQty}" /> 
+					<input type="submit" value="수량변경" /> 
+					<input type="button" value="장바구니삭제" />
+					</td>
+				</tr>
+			</c:forEach>
+
+
+		</table>
+	</form:form>
+
+
+<body>
+
+	<c:if test="${error != null}">
+
+		<script type="text/javascript">
+    var v = "${error}";
+  	alert(v);
+	</script>
+
+	</c:if>
+	<h1>주문목록</h1>
+	<table border="1px solid black">
+		<tr>
+			<th>선택<input type="checkbox" class="chk" name="chk"
+				id="allCheck" /></th>
+			<th>ORDER_PRODUCTS_NO</th>
+			<th>MEMBER_NO</th>
+			<th>PRODUCT_NO</th>
+			<th>PAYMENT_NO</th>
+			<th>ORDER_QTY</th>
+			<th>ORDER_DATE</th>
+			<th>DELIVERY_STATUS</th>
+			<th>ORDER_DELIVERY_DESTINATION</th>
+		</tr>
+		<c:forEach var="cart" items="${cartList}">
+			<!-- for(Cart cart : cartList ) -->
+			<form:form
+				action="${pageContext.request.contextPath}/cart/updateCartList"
+				modelAttribute="cart">
+				<tr>
+					<td><input type="checkbox" class="chk" name="chk" /></td>
+					<input type="text" value="${orderProducts.orderProductsNo}"
+						name="orderProductsNo" id="orderProductsNo" hidden="hidden">
+					</input>
+					<td><input type="text" value="${orderProducts.memberNo}"
+						name="memberNo" id="memberNo" readonly></input></td>
+					<td><input type="text" value="${orderProducts.productNo}"
+						name="productNo" id="productNo" readonly></input></td>
+					<td><input type="text" value="${orderProducts.paymentNo}"
+						name="paymentNo" id="paymentNo" readonly></input></td>
+					<td><input type="text" value="${orderProducts.orderQty}"
+						name="orderQty" id="orderQty" readonly></input></td>
+					<td><input type="text" value="${orderProducts.orderDate}"
+						name="orderDate" id="orderDate" readonly></input></td>
+					<td><input type="text" value="${orderProducts.deliveryStatus}"
+						name="deliveryStatus" id="deliveryStatus" readonly></input></td>
+					<td><input type="text" value="${orderProducts.orderStatus}"
+						name="orderStatus" id="orderStatus" readonly></input> <%-- <td><form:input path="orderQty" value="${cart.orderQty}" type="hidden" /> --%>
+						<input type="submit" value="수량변경" /></td>
+					<td><button type="button"
+							onclick="deleteCart('${pageContext.request.contextPath}/cart/deleteCartList?cartNo=${cart.cartNo}&memberNo=${cart.memberNo}')">장바구니
+							삭제</button></td>
+				</tr>
+			</form:form>
+		</c:forEach>
+
+
+	</table>
+	<script type="text/javascript">
+function deleteCart(url) {
+	//console.log(url)
+	if(confirm("정말 삭제합니까?")){		
+	location.href=url;
+	}
+
+}
+</script>
+
+
+</body>	
+	

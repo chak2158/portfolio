@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.goupang.www.dao.cart.CartDAO">
+
+
+	<select id="memberCartList" resultType="com.goupang.www.dto.cart.Cart"> 
+	SELECT
+		CART.MEMBER_NO,
+		CART.CART_NO,
+		PRODUCT.PRODUCT_NAME,
+		PRODUCT.PRODUCT_NO,
+		PRODUCT.PRODUCT_PRICE,
+		CART.ORDER_QTY,
+		(CART.ORDER_QTY*PRODUCT.PRODUCT_PRICE)
+		FROM PRODUCT,CART
+	WHERE PRODUCT.PRODUCT_NO = CART.PRODUCT_NO 
+	AND CART.MEMBER_NO=#{memberNo}
+	</select>
+
+	<select id="selectAllCartList" resultType="com.goupang.www.dto.cart.Cart"> 
+		SELECT 
+			CART_NO, 
+			MEMBER_NO, 
+			PRODUCT_NO, 
+			ORDER_QTY 
+		FROM CART
+		WHERE MEMBER_NO = #{memberNo}
+	</select>
+
+	<select id="selectByMemberNo" resultType="com.goupang.www.dto.cart.Cart">
+		SELECT
+			CART_NO,
+			MEMBER_NO,
+			PRODUCT_NO,
+			ORDER_QTY
+		FROM CART
+		WHERE MEMBER_NO = #{memberNo}
+	</select>
+	
+	<!-- <select id="cartNoInfo" resultType="com.goupang.www.dto.cart.Cart">
+		SELECT
+			CART.CART_NO,
+			CART.MEMBER_NO,
+			PRODUCT.PRODUCT_NAME,
+			PRODUCT.PRODUCT_NO,
+			CART.ORDER_QTY,
+			PRODUCT.PRODUCT_PRICE,
+			(CART.ORDER_QTY*PRODUCT.PRODUCT_PRICE)
+		FROM CART,PRODUCT
+		WHERE PRODUCT.PRODUCT_NO = CART.PRODUCT_NO 
+		AND CART.CART_NO= #{cartNo}	
+		
+	</select> -->
+	
+	<select id="selectCartByCartNo" resultType="com.goupang.www.dto.order.OrderCommand">
+		SELECT
+		    CART.CART_NO,
+		    CART.MEMBER_NO,
+		    MEMBER.MEMBER_NAME,
+		    MEMBER.MEMBER_EMAIL,
+		    MEMBER.MEMBER_PHONE,
+		    CART.PRODUCT_NO,
+		    PRODUCT.PRODUCT_NAME,
+		    CART.ORDER_QTY,
+		    PRODUCT.PRODUCT_PRICE
+	    FROM CART,MEMBER,PRODUCT
+	    WHERE CART.MEMBER_NO = MEMBER.MEMBER_NO
+	    AND CART.PRODUCT_NO = PRODUCT.PRODUCT_NO
+	    AND CART.CART_NO = #{cartNo}	
+		
+	</select>
+	
+	<select id="selectCartChekck" resultType="com.goupang.www.dto.cart.Cart">
+	SELECT *
+	FROM CART
+	WHERE MEMBER_NO= #{memberNo} and PRODUCT_NO = #{PRODUCT_NO};
+	</select>
+
+
+	<select id="checkMemberHasCart" resultType="int">
+	SELECT CART_NO FROM CART
+	WHERE MEMBER_NO=#{memberNo}
+	AND PRODUCT_NO=#{productNo}
+	</select>
+
+
+	<!-- 새로운카트 생성 -->
+	<insert id="addNewCart">
+		INSERT INTO CART(
+			CART_NO,
+			MEMBER_NO,
+			PRODUCT_NO,
+			ORDER_QTY
+		)VALUES (
+			CART_SEQ.NEXTVAL,
+			#{memberNo},
+			#{productNo},
+			#{orderQty}
+		)
+	</insert>
+
+<!-- 	<update id="updateCart" parameterType="com.goupang.www.dto.cart.Cart">
+		UPDATE CART
+		SET
+			ORDER_QTY = #{orderQty}
+		WHERE
+			CART_NO = #{cartNo} 
+		AND
+			MEMBER_NO = #{memberNo}
+	</update> -->
+	
+	<select id="cartQty" resultType="int">
+	 SELECT ORDER_QTY
+	 FROM CART
+	 WHERE CART_NO = #{cartNo}
+	</select>
+	
+	<update id="addQty" parameterType="com.goupang.www.dto.cart.Cart">
+	
+	UPDATE CART
+	SET ORDER_QTY = #{orderQty}
+	WHERE CART_NO =#{cartNo}
+	</update>
+	
+	<update id="updateCart">
+		UPDATE CART
+		SET
+			ORDER_QTY = #{orderQty}
+		WHERE
+			CART_NO = #{cartNo} 
+		AND
+			MEMBER_NO = #{memberNo}
+	</update>
+
+	<delete id="deleteCart" parameterType="com.goupang.www.dto.cart.Cart">
+		DELETE FROM CART WHERE CART_NO = #{cartNo}
+	</delete>
+
+</mapper>

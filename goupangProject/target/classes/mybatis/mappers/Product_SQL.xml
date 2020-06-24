@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+
+<mapper namespace="com.goupang.www.dao.product.ProductDAO">
+
+	<!-- id 속성은 DAO 의 메소드와 같아야 한다. 여기의 boardVO 는 mybatis-confg.xml 에 Alias 되어 
+		있습니다. -->
+	<select id="selectProductList"
+		resultType="com.goupang.www.dto.product.Product">
+		SELECT
+		PRODUCT_NO,
+		SELLER_NO,
+		PRODUCT_NAME,
+		PRODUCT_PRICE,
+		PRODUCT_BRAND,
+		PRODUCT_STOCK,
+		PRODUCT_OPTION,
+		PRODUCT_CONTENT,
+		PRODUCT_REG_DATE,
+		PRODUCT_DEL_DATE,
+		PRODUCT_SELL_START_DATE,
+		PRODUCT_SELL_END_DATE,
+		PRODUCT_AVG_RATE
+		FROM PRODUCT
+		WHERE SELLER_NO = #{sellerNo}
+		ORDER BY PRODUCT_NO DESC
+	</select>
+	
+	<select id="selectProductByProductNo"
+		resultType="com.goupang.www.dto.product.Product">
+		SELECT
+		PRODUCT_NO,
+		SELLER_NO,
+		PRODUCT_NAME,
+		PRODUCT_PRICE,
+		PRODUCT_BRAND,
+		PRODUCT_STOCK,
+		PRODUCT_OPTION,
+		PRODUCT_CONTENT,
+		PRODUCT_REG_DATE,
+		PRODUCT_DEL_DATE,
+		PRODUCT_SELL_START_DATE,
+		PRODUCT_SELL_END_DATE,
+		PRODUCT_AVG_RATE
+		FROM PRODUCT
+		WHERE PRODUCT_NO = #{productNo}
+	</select>
+	
+	
+	
+	<select id="selectProductListByCategory"
+        resultType="com.goupang.www.dto.product.Product">
+        
+        select 
+        product.PRODUCT_NO, 
+        product.SELLER_NO, 
+        product.PRODUCT_NAME, 
+        product.PRODUCT_PRICE, 
+        product.PRODUCT_BRAND, 
+        product.PRODUCT_STOCK, 
+        product.PRODUCT_OPTION, 
+        product.PRODUCT_CONTENT, 
+        product.PRODUCT_REG_DATE, 
+        product.PRODUCT_DEL_DATE, 
+        product.PRODUCT_SELL_START_DATE, 
+        product.PRODUCT_SELL_END_DATE, 
+        product.PRODUCT_AVG_RATE 
+        from 
+        product,
+        product_category 
+        where 
+        product.product_no = product_category.product_no 
+        and product_category.category_no = #{categoryNo}
+    </select>
+	
+	<insert id="insertProduct">
+        INSERT INTO PRODUCT
+        VALUES (
+        PRODUCT_SEQ.NEXTVAL,
+        #{sellerNo},
+        #{productName},
+        #{productPrice},
+        #{productBrand},
+        #{productStock},
+        #{productOption},
+        #{productContent},
+        SYSDATE,
+        SYSDATE,
+        SYSDATE,
+        SYSDATE,
+        '3'
+        )
+    </insert>
+	
+	
+    <update id="updateProduct" parameterType="com.goupang.www.dto.product.Product" >
+        UPDATE PRODUCT
+        SET
+        PRODUCT_NO=#{productNo},
+        SELLER_NO = #{sellerNo},
+        PRODUCT_NAME = #{productName},
+        PRODUCT_PRICE = #{productPrice},
+        PRODUCT_BRAND = #{productBrand},
+        PRODUCT_STOCK = #{productStock},
+        PRODUCT_OPTION = #{productOption},
+        PRODUCT_CONTENT = #{productContent},
+        PRODUCT_REG_DATE = SYSDATE,
+        PRODUCT_DEL_DATE = SYSDATE,
+        PRODUCT_SELL_START_DATE =SYSDATE,
+        PRODUCT_SELL_END_DATE   = SYSDATE,
+        PRODUCT_AVG_RATE = '3'
+        WHERE PRODUCT_NO = #{productNo}
+    </update>
+
+    <delete id="deleteProduct">
+        DELETE PRODUCT
+        WHERE PRODUCT_NO = #{productNo}
+    </delete>
+    
+    <delete id="deleteProductImg">
+        DELETE PRODUCT_IMG
+        WHERE PRODUCT_NO = #{productNo}
+    </delete>
+
+    <select id="maxProductNo" resultType="int">
+         select max(PRODUCT_NO) from PRODUCT
+    </select>
+<!--     <select id="countProduct" resultType="int">
+    SELECT COUNT(*)FROM PRODUCT
+    </select> -->
+
+
+</mapper>

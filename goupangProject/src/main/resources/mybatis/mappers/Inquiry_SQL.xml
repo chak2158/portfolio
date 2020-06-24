@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+
+<mapper namespace="com.goupang.www.dao.inquiry.InquiryDAO">
+
+	<!-- id 속성은 DAO 의 메소드와 같아야 한다. 여기의 boardVO 는 mybatis-confg.xml 에 Alias 되어 있습니다. -->
+
+	<select id="selectInquiryList" resultType="com.goupang.www.dto.inquiry.Inquiry"> 
+	
+	SELECT *
+FROM
+  (
+  SELECT *
+  FROM
+  (
+    SELECT ROWNUM AS SEQ,INQUIRY_NO,MEMBER_NO,PRODUCT_NO,INQUIRY_TITLE,INQUIRY_CONTENT,INQUIRY_WRT_DATE,INQUIRY_MOD_DATE,INQUIRY_DEL_DATE 
+    FROM
+      (
+        SELECT *
+        FROM INQUIRY
+        WHERE PRODUCT_NO = #{productNo}
+        ORDER BY INQUIRY_NO
+      )
+  )
+WHERE SEQ >= #{startIndex}
+)
+WHERE  <![CDATA[ ROWNUM <= #{pageSize}  ]]>
+	</select>
+
+	<insert id="insertInquiry">
+	INSERT INTO INQUIRY(
+	INQUIRY_NO,       
+	MEMBER_NO,
+	PRODUCT_NO, 
+	INQUIRY_TITLE,
+	INQUIRY_CONTENT,
+	INQUIRY_WRT_DATE,     
+	INQUIRY_MOD_DATE
+	)VALUES(
+	INQUIRY_SEQ.nextval,
+	#{memberNo},
+	#{productNo},
+	#{inquiryTitle},
+	#{inquiryContent},
+	SYSDATE,
+	SYSDATE
+	)
+	</insert>
+	<update id="updateInquiry">
+	UPDATE INQUIRY SET 
+	INQUIRY_CONTENT = #{inquiryContent},
+	INQUIRY_MOD_DATE = SYSDATE 
+	WHERE INQUIRY_NO = #{inquiryNo}
+	</update>
+	
+	<delete id="deleteInquiry">
+	DELETE FROM INQUIRY WHERE INQUIRY_NO = #{inquiryNo}
+	</delete>
+	<insert id="insertInquiryReply">
+	INSERT INTO INQUIRY_REPLY(
+	INQUIRY_REPLY_NO,     
+	SELLER_NO,    
+	INQUIRY_NO,
+	REPLY_CONTENT,
+	REPLY_WRT_DATE,      
+	REPLY_MOD_DATE
+	)VALUES(
+	INQUIRY_REPLY_SEQ.nextval,
+	#{sellerNo},
+	#{inquiryNo},
+	#{replyContent},
+	SYSDATE,
+	SYSDATE
+	)
+	</insert>
+	 <select id="selectInquiryReplyListByInquiryNo" resultType="com.goupang.www.dto.inquiry.InquiryReply">
+	 SELECT * FROM INQUIRY_REPLY WHERE INQUIRY_NO = #{inquiryNo}
+	</select>
+	 <select id="selectInquiryCnt" resultType="int">
+	 SELECT count(*) FROM INQUIRY WHERE PRODUCT_NO = #{productNo}
+	</select>
+</mapper>

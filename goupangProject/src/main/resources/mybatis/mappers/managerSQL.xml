@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+
+<mapper namespace="com.goupang.www.dao.manager.ManagerDAO">
+
+	<!-- id 속성은 DAO 의 메소드와 같아야 한다. 여기의 boardVO 는 mybatis-confg.xml 에 Alias 되어 
+		있습니다. -->
+	<select id="selectSellerList"
+		resultType="com.goupang.www.dto.seller.Seller">
+		SELECT
+		SELLER_NO,
+		SELLER_LICENSENUMBER,
+		SELLER_COMPANYNAME,
+		SELLER_NAME,
+		SELLER_ID,
+		SELLER_PW,
+		SELLER_PHONE,
+		SELLER_ADDR,
+		SELLER_GRANT
+		FROM SELLER
+	</select>
+
+	<select id="selectBySellerNo"
+		resultType="com.goupang.www.dto.product.Product"
+		parameterType="com.goupang.www.dto.product.Product">
+		SELECT
+		PRODUCT_NO ,
+		SELLER_NO,
+		PRODUCT_NAME ,
+		PRODUCT_PRICE
+		,
+		PRODUCT_BRAND ,
+		PRODUCT_STOCK ,
+		PRODUCT_OPTION ,
+		PRODUCT_CONTENT
+		FROM
+		PRODUCT
+		WHERE SELLER_NO = #{sellerNo}
+	</select>
+
+	<update id="updateSeller"
+		parameterType="com.goupang.www.dto.seller.SellerRequest">
+		UPDATE SELLER SET
+		SELLER_GRANT = #{sellerGrant}
+		WHERE
+		SELLER_NO = #{sellerNo}
+	</update>
+
+	<delete id="deleteSeller"
+		parameterType="com.goupang.www.dto.seller.SellerRequest">
+		DELETE FROM SELLER
+		WHERE SELLER_NO = #{sellerNo}
+	</delete>
+
+	<select id="selectMemberList"
+		resultType="com.goupang.www.dto.member.Member">
+		SELECT
+		MEMBER_NO,
+		MEMBER_EMAIL,
+		MEMBER_NAME,
+		MEMBER_PHONE,
+		MEMBER_ADDR,
+		MEMBER_LEAVE_DATE,
+		MEMBER_GRANT
+		FROM MEMBER
+	</select>
+
+	<select id="selectByMemberName"
+		resultType="com.goupang.www.dto.member.Member"
+		parameterType="com.goupang.www.dto.member.Member">
+		SELECT
+		MEMBER_NO,
+		MEMBER_EMAIL,
+		MEMBER_NAME,
+		MEMBER_PHONE,
+		MEMBER_ADDR,
+		MEMBER_LEAVE_DATE,
+		MEMBER_GRANT
+		FROM MEMBER
+		WHERE MEMBER_NAME
+		LIKE '%'||#{memberName}||'%'
+	</select>
+
+
+	<update id="updateMember"
+		parameterType="com.goupang.www.dto.member.Member">
+		UPDATE MEMBER SET
+		MEMBER_GRANT = #{memberGrant}
+		WHERE
+		MEMBER_NO = #{memberNo}
+	</update>
+
+	<delete id="deleteMember"
+		parameterType="com.goupang.www.dto.member.Member">
+		DELETE FROM MEMBER
+		WHERE MEMBER_NO = #{memberNo}
+	</delete>
+
+	<select id="MemberList2"
+		resultType="com.goupang.www.dto.member.Member"
+		parameterType="com.goupang.www.controller.inquiry.Pagination">
+		SELECT MEMBER_NO,
+		MEMBER_EMAIL,
+		MEMBER_NAME,
+		MEMBER_PHONE,
+		MEMBER_ADDR,
+		MEMBER_LEAVE_DATE,
+		MEMBER_GRANT
+		 FROM (
+		SELECT ROW_NUMBER()
+		OVER (ORDER BY MEMBER_NO) NUM,
+		A.MEMBER_NO,
+		MEMBER_EMAIL,
+		MEMBER_NAME,
+		MEMBER_PHONE,
+		MEMBER_ADDR,
+		MEMBER_LEAVE_DATE,
+		MEMBER_GRANT
+		FROM MEMBER A
+		ORDER BY MEMBER_NO
+		)
+		WHERE NUM BETWEEN #{startIndex} AND #{pageSize}
+	</select>
+
+	<select id="MemberCnt" resultType="int">
+		SELECT count(*) FROM
+		MEMBER 
+	</select>
+
+</mapper>

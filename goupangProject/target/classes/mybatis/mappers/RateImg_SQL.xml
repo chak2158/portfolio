@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+
+<mapper namespace="com.goupang.www.dao.review.FileUploadDAO">
+
+    <select id = "selectImg" resultType="com.goupang.www.dto.review.ReviewImage">
+        SELECT 
+        I.RATE_IMG_NO,
+        R.REVIEW_NO, 
+        I.RATE_IMG_PATH, 
+        I.RATE_THUMB_PATH 
+        FROM 
+        RATE_IMG I, REVIEW R 
+        where 
+        R.REVIEW_NO = I.REVIEW_NO
+        and
+        R.REVIEW_NO = #{reviewNo}
+    </select>
+
+	<insert id="insertImage">
+		INSERT INTO
+		RATE_IMG(
+		RATE_IMG_NO,
+		REVIEW_NO,
+		RATE_IMG_PATH,
+		RATE_THUMB_PATH)
+		VALUES
+		(REVIEW_IMG_SEQ.nextval,
+		#{reviewNo},
+		#{rateImgPath},
+		#{rateThumbPath}
+		)
+	</insert>
+	<update id="updateImage">
+		UPDATE RATE_IMG SET
+		RATE_IMG_PATH = #{rateImgPath},
+		RATE_THUMB_PATH = #{rateThumbPath}
+		WHERE REVIEW_NO = #{reviewNo}
+	</update>
+
+</mapper>

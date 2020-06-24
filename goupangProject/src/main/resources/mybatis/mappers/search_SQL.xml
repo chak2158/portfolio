@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+
+<mapper namespace="com.goupang.www.dao.search.SearchDAO">
+
+
+	
+	<select id="selectProductListByProductName"
+        resultType="com.goupang.www.dto.product.Product">
+        
+        select 
+        product.PRODUCT_NO, 
+        product.SELLER_NO, 
+        product.PRODUCT_NAME, 
+        product.PRODUCT_PRICE, 
+        product.PRODUCT_BRAND, 
+        product.PRODUCT_STOCK, 
+        product.PRODUCT_OPTION, 
+        product.PRODUCT_CONTENT, 
+        product.PRODUCT_REG_DATE, 
+        product.PRODUCT_DEL_DATE, 
+        product.PRODUCT_SELL_START_DATE, 
+        product.PRODUCT_SELL_END_DATE, 
+        product.PRODUCT_AVG_RATE 
+        from 
+        product,
+        product_category 
+        where 
+        product.product_no = product_category.product_no 
+        and lower(product.PRODUCT_NAME) LIKE lower('%'||#{productName}||'%')
+    </select>
+	<select id="selectProductNameListByProductName"
+        resultType="string">
+        select 
+        PRODUCT_NAME
+        from 
+        product
+        where 
+        lower(PRODUCT_NAME) LIKE lower('%'||#{productName}||'%')
+    </select>
+	
+
+
+
+</mapper>

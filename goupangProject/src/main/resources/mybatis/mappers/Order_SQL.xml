@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+	<mapper namespace="com.goupang.www.dao.order.OrderDAO">
+
+	<select id="selectAllOrderList" resultType="com.goupang.www.dto.order.Order">
+	SELECT
+	ORDER_PRODUCTS.ORDER_PRODUCTS_NO,
+	ORDER_PRODUCTS.MEMBER_NO,
+	ORDER_PRODUCTS.PRODUCT_NO,
+	PRODUCT.PRODUCT_NAME,
+	ORDER_PRODUCTS.ORDER_QTY,
+	ORDER_PRODUCTS.ORDER_DATE,
+	ORDER_PRODUCTS.DELIVERY_STATUS,
+	ORDER_PRODUCTS.ORDER_STATUS
+	FROM
+	PRODUCT,ORDER_PRODUCTS
+	WHERE ORDER_PRODUCTS.PRODUCT_NO=PRODUCT.PRODUCT_NO
+	AND ORDER_PRODUCTS.MEMBER_NO=#{memberNo}
+	ORDER BY ORDER_PRODUCTS.ORDER_DATE DESC
+	</select>
+	<!-- <select id="selectAllOrderList" resultType="com.goupang.www.dto.order.Order"> 
+		SELECT 
+		   ORDER_PRODUCTS_NO,
+		   MEMBER_NO,
+		   PRODUCT_NO,
+		   PAYMENT_NO,
+		   ORDER_QTY,
+		   ORDER_DATE,
+		   DELIVERY_STATUS,
+		   ORDER_DELIVERY_DESTINATION,
+		   ORDER_STATUS,
+		   ORDER_STATUS_DATE
+		FROM ORDER_PRODUCTS 
+		WHERE MEMBER_NO = #{memberNo}
+		ORDER BY ORDER_DATE DESC
+	</select> -->
+
+
+	<select id="memberInfo" resultType="com.goupang.www.dto.member.Member"> 
+		 SELECT
+		 	MEMBER_NO,
+		 	MEMBER_NAME,
+		 	MEMBER_EMAIL,
+		 	MEMBER_PHONE
+		 FROM MEMBER
+		 WHERE MEMBER_NO = #{memberNo}
+	</select>
+	
+	
+	<update id="refundOrderUpdate" parameterType="com.goupang.www.dto.order.Order">
+		UPDATE ORDER_PRODUCTS
+		SET
+			ORDER_STATUS = 1,
+			ORDER_STATUS_DATE = SYSDATE
+		WHERE
+			ORDER_PRODUCTS_NO = #{orderProductsNo}
+		AND
+			PRODUCT_NO = #{productNo}
+	</update>
+	
+	<update id="cancelOrderUpdate" parameterType="com.goupang.www.dto.order.Order">
+		UPDATE ORDER_PRODUCTS
+		SET
+			ORDER_STATUS = 2,
+			ORDER_STATUS_DATE = SYSDATE
+		WHERE
+			ORDER_PRODUCTS_NO = #{orderProductsNo} 
+		AND
+			PRODUCT_NO = #{productNo}
+	</update>
+	
+	<update id="confirmOrderUpdate" parameterType="com.goupang.www.dto.order.Order">
+		UPDATE ORDER_PRODUCTS
+		SET
+			ORDER_STATUS = 3,
+			ORDER_STATUS_DATE = SYSDATE
+		WHERE
+			ORDER_PRODUCTS_NO = #{orderProductsNo} 
+		AND
+			PRODUCT_NO = #{productNo}
+	</update>
+	
+	 <insert id="insertOrder" parameterType="com.goupang.www.dto.order.OrderRequest">
+	<!--  <insert id="insertOrder" parameterType="java.util.Map"> -->
+		INSERT INTO ORDER_PRODUCTS (
+			ORDER_PRODUCTS_NO,
+			   MEMBER_NO,
+			   PRODUCT_NO, 
+			   ORDER_QTY,
+			   PAYMENT_NO,
+			   ORDER_DATE,
+			   DELIVERY_STATUS,
+			   ORDER_DELIVERY_DESTINATION
+		) VALUES 
+		<!-- <foreach collection="list" item="item" separator=","> --> 
+		(
+			ORDER_PRODUCTS_SEQ.NEXTVAL,
+			#{memberNo},
+			#{orderProduct.productNo},
+			#{orderProduct.orderQty},
+			#{paymentNo},
+			SYSDATE,
+			'배송준비중',
+			#{orderDeliveryDestination}
+		)
+		<!-- </foreach> -->
+	</insert>
+
+	<delete id="deleteCart">
+		DELETE FROM CART 
+		WHERE PRODUCT_NO = #{productNo} and MEMBER_NO = #{memberNo}
+	</delete>
+<!-- 
+	<update id="modifyMemberPhone" parameterType="com.goupang.www.dto.member.Member">
+		UPDATE MEMBER
+		SET
+			MEMBER_PHONE = #{memberPhone}
+		WHERE
+			MEMBER_NO = #{memberNo}
+		
+	</update> -->
+
+
+</mapper>
